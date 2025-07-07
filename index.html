@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Solar Panel AR Demo - Nordvolt Sol</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .ar-demo-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .ar-button {
+            background: linear-gradient(135deg, #ff6b35, #ff8e53);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.4);
+            transition: all 0.3s ease;
+            margin: 10px;
+            min-width: 250px;
+        }
+
+        .ar-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.6);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .demo-video {
+            position: relative;
+            background: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-placeholder {
+            color: white;
+            text-align: center;
+        }
+
+        .video-placeholder h3 {
+            margin-bottom: 10px;
+        }
+
+        .simple-ar-demo {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .camera-placeholder {
+            width: 100%;
+            height: 300px;
+            background: #333;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .panel-overlay {
+            position: relative;
+            display: inline-block;
+        }
+
+        .solar-panel {
+            width: 60px;
+            height: 30px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid #4a5568;
+            border-radius: 4px;
+            margin: 5px;
+            display: inline-block;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .solar-panel::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: linear-gradient(45deg, #2d3748 25%, transparent 25%, transparent 75%, #2d3748 75%),
+                        linear-gradient(45deg, #2d3748 25%, transparent 25%, transparent 75%, #2d3748 75%);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+            border-radius: 2px;
+        }
+
+        .calc-display {
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #2196f3;
+        }
+
+        .tech-specs {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2em;
+            }
+            
+            .ar-button {
+                min-width: 200px;
+                padding: 15px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <h1>🌞 Solar Panel AR Demo</h1>
+        <p>Experience the future of solar sales - see panels on your roof instantly!</p>
+    </div>
+
+    <div class="demo-container">
+        <!-- Live AR Demo Section -->
+        <div class="ar-demo-card">
+            <h2>🚀 Live Web AR Demo</h2>
+            <p>This works on your phone browser right now - no app download needed!</p>
+            
+            <button class="ar-button" onclick="startWebAR()">
+                📱 Start AR Camera Demo
+            </button>
+            
+            <button class="ar-button" onclick="startSimpleDemo()" style="background: linear-gradient(135deg, #4CAF50, #45a049);">
+                🏠 Simple Roof Demo
+            </button>
+
+            <div class="instructions">
+                <h4>📋 How to Test:</h4>
+                <ol>
+                    <li><strong>Mobile Required:</strong> Open this on your smartphone</li>
+                    <li><strong>Grant Camera:</strong> Allow camera access when prompted</li>
+                    <li><strong>Point at Surface:</strong> Aim at a flat surface (table, floor, wall)</li>
+                    <li><strong>See Magic:</strong> Solar panels appear in real-time!</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Simple Demo Section -->
+        <div class="simple-ar-demo" id="simple-demo" style="display: none;">
+            <h3>🏠 Simulated AR Experience</h3>
+            <p>Here's what the AR experience looks like:</p>
+            
+            <div class="camera-placeholder" id="camera-view">
+                <div>📷 Point camera at your roof...</div>
+            </div>
+            
+            <button class="ar-button" onclick="simulatePanelPlacement()" style="background: #4CAF50;">
+                🎯 Place Solar Panels
+            </button>
+            
+            <div class="calc-display" id="calc-results" style="display: none;">
+                <h4>💰 Live Calculation Results</h4>
+                <div class="calc-row">
+                    <span>Solar Panels:</span>
+                    <span id="panel-count">8</span>
+                </div>
+                <div class="calc-row">
+                    <span>Roof Area:</span>
+                    <span>32 m²</span>
+                </div>
+                <div class="calc-row">
+                    <span>Yearly Production:</span>
+                    <span>2,800 kWh</span>
+                </div>
+                <div class="calc-row">
+                    <span><strong>Yearly Savings:</strong></span>
+                    <span><strong>8,400 kr</strong></span>
+                </div>
+                <div class="calc-row">
+                    <span>Investment Cost:</span>
+                    <span>85,000 kr</span>
+                </div>
+                <div class="calc-row">
+                    <span>After ROT Discount:</span>
+                    <span>68,000 kr</span>
+                </div>
+            </div>
+            
+            <button class="ar-button" onclick="connectToEmma()" style="background: linear-gradient(135deg, #9C27B0, #673AB7);">
+                💬 Talk to Emma About This
+            </button>
+        </div>
+
+        <!-- Features Section -->
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>No App Download</h3>
+                <p>Works directly in your phone browser - just like a website!</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Results</h3>
+                <p>See panels and calculations in real-time as you move your camera</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Accurate Placement</h3>
+                <p>AI detects roof surfaces and places panels in optimal positions</p>
+            </div>
+        </div>
+
+        <!-- Technical Specs -->
+        <div class="tech-specs">
+            <h3>🔧 Technical Capabilities</h3>
+            <ul>
+                <li><strong>Camera Access:</strong> Full HD camera with real-time processing</li>
+                <li><strong>3D Rendering:</strong> WebGL with realistic lighting and shadows</li>
+                <li><strong>Surface Detection:</strong> AI-powered plane detection for roofs</li>
+                <li><strong>Live Calculations:</strong> Real-time ROI and production estimates</li>
+                <li><strong>Cross-Platform:</strong> Works on iOS Safari, Android Chrome</li>
+                <li><strong>Performance:</strong> 30-60 FPS on modern smartphones</li>
+            </ul>
+        </div>
+
+        <!-- Real AR Demo Info -->
+        <div class="ar-demo-card">
+            <h3>🌟 Want to See the Real AR?</h3>
+            <p>For a full AR experience with actual surface detection and 3D panels, you'll need the complete implementation with 8th Wall or WebXR.</p>
+            
+            <div class="demo-video">
+                <div class="video-placeholder">
+                    <h3>📹 AR Demo Video</h3>
+                    <p>Customer points phone at roof → Solar panels appear → Live ROI calculation</p>
+                    <small>Real implementation shows 3D panels floating on actual roof surfaces</small>
+                </div>
+            </div>
+            
+            <p><strong>Development Time:</strong> 4-6 weeks for full AR implementation<br>
+            <strong>Cost:</strong> ~$5,000 including 8th Wall license<br>
+            <strong>Performance:</strong> Same quality as native AR apps</p>
+        </div>
+    </div>
+
+    <script>
+        function startWebAR() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('🚫 AR requires a modern smartphone browser with camera access. Try Chrome or Safari on mobile!');
+                return;
+            }
+            
+            alert('🎯 In the real implementation:\n\n📱 Camera opens\n🏠 AI detects roof surface\n☀️ 3D solar panels appear\n💰 Live ROI calculations\n\nThis demo shows the concept - full AR needs WebXR/8th Wall integration!');
+            
+            // Simulate camera access request
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    alert('✅ Camera access granted! In real AR, you would now see 3D solar panels overlaid on your roof surface.');
+                    stream.getTracks().forEach(track => track.stop()); // Stop camera
+                })
+                .catch(function(err) {
+                    alert('❌ Camera access denied. Please allow camera permission for AR to work.');
+                });
+        }
+        
+        function startSimpleDemo() {
+            document.getElementById('simple-demo').style.display = 'block';
+            document.getElementById('simple-demo').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function simulatePanelPlacement() {
+            const cameraView = document.getElementById('camera-view');
+            
+            // Simulate roof detection
+            cameraView.innerHTML = '<div>🎯 Roof surface detected!<br>Placing solar panels...</div>';
+            
+            setTimeout(() => {
+                // Show panels on "roof"
+                let panelsHTML = '<div style="background: rgba(0,0,0,0.1); padding: 20px; border-radius: 10px;">';
+                panelsHTML += '<div>🏠 Your Roof with Solar Panels:</div><br>';
+                
+                for (let i = 0; i < 8; i++) {
+                    panelsHTML += '<div class="solar-panel"></div>';
+                    if ((i + 1) % 4 === 0) panelsHTML += '<br>';
+                }
+                
+                panelsHTML += '</div>';
+                cameraView.innerHTML = panelsHTML;
+                
+                // Show calculations
+                document.getElementById('calc-results').style.display = 'block';
+                
+                // Animate panel count
+                animateNumber('panel-count', 0, 8, 1000);
+                
+            }, 1500);
+        }
+        
+        function animateNumber(elementId, start, end, duration) {
+            const element = document.getElementById(elementId);
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.floor(start + (end - start) * progress);
+                
+                element.textContent = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+        
+        function connectToEmma() {
+            alert('💬 In your real system:\n\n✅ AR data sent to Emma\n🤖 Emma: "Fantastiskt! 8 paneler = 8,400 kr/år besparing"\n📅 Emma offers to book consultation\n🔗 Seamless handoff to sales team');
+        }
+        
+        // Show device info
+        window.onload = function() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (!isMobile) {
+                const warning = document.createElement('div');
+                warning.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: #ff9800; color: white; text-align: center; padding: 10px; z-index: 1000;';
+                warning.innerHTML = '📱 Best experienced on mobile device! Open this on your smartphone for AR demo.';
+                document.body.appendChild(warning);
+            }
+        };
+    </script>
+</body>
+</html>
